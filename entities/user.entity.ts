@@ -13,11 +13,10 @@ export class UserEntity {
     this.bills = user.bills;
   }
 
-  create() {
+  validate() {
     if (this.auth0UserId.length < 10) {
       throw new Error('invalid auth0UserId credentials');
     }
-
     return { id: this.id, auth0UserId: this.auth0UserId, bills: this.bills };
   }
 }

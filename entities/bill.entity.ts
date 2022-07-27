@@ -8,7 +8,6 @@ export class BillEntity {
   public dueDate: Date;
   public total: number;
   public isPaid: boolean;
-  private userId: string;
 
   constructor(bill: Bill) {
     this.id = randomUUID();
@@ -16,7 +15,6 @@ export class BillEntity {
     this.dueDate = bill.dueDate;
     this.total = bill.total;
     this.isPaid = bill.isPaid;
-    this.userId = bill.userId;
     this.title = bill.title;
   }
 
@@ -38,7 +36,6 @@ export class BillEntity {
       dueDate: this.dueDate,
       total: this.total,
       isPaid: this.isPaid,
-      userId: this.userId,
     };
   }
 }

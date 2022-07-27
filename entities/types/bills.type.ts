@@ -4,5 +4,5 @@ export type Bill = {
   dueDate: Date;
   total: number;
   isPaid: boolean;
-  userId: string;
+  userId?: string;
 };
