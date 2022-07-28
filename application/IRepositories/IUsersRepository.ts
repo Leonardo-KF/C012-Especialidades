@@ -1,4 +1,4 @@
-import { User } from '../entities/types/user.type';
+import { User } from '../../domain/types/user.type';
 
 export interface IUsersRepository {
   findUserByAuth0Id(auth0UserId: string): Promise<User | undefined>;

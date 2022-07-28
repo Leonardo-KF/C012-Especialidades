@@ -1,13 +1,13 @@
-import { Bill } from './types/bills.type';
-import { User } from './types/user.type';
+import { Bill } from '../types/bills.type';
 import { randomUUID } from 'crypto';
+import { CreateUser } from '../types/userCreate';
 
 export class UserEntity {
   private id: string;
   private auth0UserId: string;
   public bills: Bill[];
 
-  constructor(user: User) {
+  constructor(user: CreateUser) {
     this.id = randomUUID();
     this.auth0UserId = user.auth0UserId;
     this.bills = user.bills;

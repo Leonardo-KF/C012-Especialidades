@@ -1,5 +1,5 @@
 import { randomUUID } from 'crypto';
-import { Bill } from './types/bills.type';
+import { BillCreate } from '../types/billCreate.type';
 
 export class BillEntity {
   private id: string;
@@ -9,7 +9,7 @@ export class BillEntity {
   public total: number;
   public isPaid: boolean;
 
-  constructor(bill: Bill) {
+  constructor(bill: BillCreate) {
     this.id = randomUUID();
     this.barcode = bill.barcode;
     this.dueDate = bill.dueDate;

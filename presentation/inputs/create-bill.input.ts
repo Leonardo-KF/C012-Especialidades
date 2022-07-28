@@ -1,8 +1,7 @@
-export type Bill = {
-  title: string;
+export interface CreateBillInput {
   barcode: string;
   dueDate: Date;
   total: number;
   isPaid: boolean;
-  userId?: string;
-};
+  title: string;
+}
