@@ -4,10 +4,15 @@ import { IUsersRepository } from '../../application/IRepositories/IUsersReposito
 export class UsersRepositoryInMemory implements IUsersRepository {
   private users: User[] = [];
   findUserByAuth0Id(auth0UserId: string): Promise<User | undefined> {
-    const userByAuth0 = this.users.find(
-      (user) => user.auth0UserId === auth0UserId,
-    );
-    return Promise.resolve(userByAuth0);
+    let userIndex = 0;
+    const userByAuth0 = this.users.find((user, index) => {
+      if (user.auth0UserId === auth0UserId) {
+        userIndex = index;
+        return user;
+      }
+    });
+
+    return Promise.resolve(this.users[userIndex]);
   }
 
   createUser(user: User): Promise<User> {

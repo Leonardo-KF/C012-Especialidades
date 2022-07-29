@@ -66,6 +66,7 @@ export class BillsRepositoryInMemory implements IBillsRepository {
 
   create(bill: Bill): Promise<Bill> {
     this.bills.push(bill);
+    console.log(this.bills);
     return Promise.resolve(bill);
   }
 }

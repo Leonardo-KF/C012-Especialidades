@@ -1,0 +1,41 @@
+# ------------------------------------------------------
+# THIS FILE WAS AUTOMATICALLY GENERATED (DO NOT MODIFY)
+# ------------------------------------------------------
+
+type BillModelNest {
+  id: ID!
+  title: String!
+  dueDate: DateTime!
+  total: Float!
+  isPaid: Boolean!
+  barcode: String!
+}
+
+"""
+A date-time string at UTC, such as 2019-12-03T09:54:33Z, compliant with the date-time format.
+"""
+scalar DateTime
+
+type UserModelNest {
+  id: ID!
+  auth0UserId: String!
+  bills: [BillModelNest!]!
+  userBills: [BillModelNest!]!
+}
+
+type Query {
+  hello: String!
+  Me: UserModelNest!
+}
+
+type Mutation {
+  CreateBill(data: CreateBillInputNest!): BillModelNest!
+}
+
+input CreateBillInputNest {
+  barcode: String!
+  dueDate: DateTime!
+  total: Float!
+  isPaid: Boolean!
+  title: String!
+}
