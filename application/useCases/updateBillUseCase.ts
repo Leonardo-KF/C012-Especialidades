@@ -1,6 +1,6 @@
 import { BillUpdate } from '../../domain/types/billUpdate.type';
 import { IBillsRepository } from '../IRepositories/IBillsRepository';
-import { UserValidation } from '../validation/userValidationservice';
+import { UserValidation } from '../utils/userValidationservice';
 
 export class UpdateBillUseCase {
   constructor(

@@ -10,9 +10,10 @@ export class BillEntity {
   public isPaid: boolean;
 
   constructor(bill: BillCreate) {
+    let alterDueDate = new Date(bill.dueDate).toISOString().slice(0, 10);
     this.id = randomUUID();
     this.barcode = bill.barcode;
-    this.dueDate = bill.dueDate;
+    this.dueDate = new Date(alterDueDate + 'T00:00:00.000Z');
     this.total = bill.total;
     this.isPaid = bill.isPaid;
     this.title = bill.title;
@@ -22,7 +23,10 @@ export class BillEntity {
     if (this.total < 1) {
       throw new Error('Invalid total please send a total greater than 1');
     }
-    if (this.dueDate < new Date(Date.now())) {
+    const currentDay = new Date(
+      new Date(Date.now()).toISOString().slice(0, 10) + 'T00:00:00.000Z',
+    );
+    if (this.dueDate < currentDay) {
       throw new Error('Invalid due date');
     }
     if (this.barcode.length < 10) {

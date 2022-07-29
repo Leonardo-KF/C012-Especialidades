@@ -1,5 +1,5 @@
 import { IBillsRepository } from '../IRepositories/IBillsRepository';
-import { UserValidation } from '../validation/userValidationservice';
+import { UserValidation } from '../utils/userValidationservice';
 
 export class DeleteBillUseCase {
   constructor(

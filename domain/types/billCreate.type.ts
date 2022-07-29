@@ -1,4 +1,5 @@
 export type BillCreate = {
+  id?: string;
   title: string;
   barcode: string;
   dueDate: Date;

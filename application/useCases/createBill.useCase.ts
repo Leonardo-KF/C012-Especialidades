@@ -1,7 +1,7 @@
 import { BillEntity } from '../../domain/entities/bill.entity';
 import { BillCreate } from '../../domain/types/billCreate.type';
 import { IBillsRepository } from '../IRepositories/IBillsRepository';
-import { UserValidation } from '../validation/userValidationservice';
+import { UserValidation } from '../utils/userValidationservice';
 
 export class CreateBillUseCase {
   constructor(

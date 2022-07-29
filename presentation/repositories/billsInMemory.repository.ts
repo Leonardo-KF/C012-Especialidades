@@ -5,15 +5,28 @@ import { IBillsRepository } from '../../application/IRepositories/IBillsReposito
 export class BillsRepositoryInMemory implements IBillsRepository {
   public bills: Bill[] = [];
 
+  findBillsByDate(date: Date): Promise<Bill[]> {
+    const billsByDate: Bill[] = [];
+    this.bills.map((bill) => {
+      if (bill.dueDate === date) {
+        billsByDate.push(bill);
+      }
+    });
+
+    return Promise.resolve(billsByDate);
+  }
+
   updateBill(billUpdate: BillUpdate): Promise<Bill | undefined> {
     let updatedBill: Bill | undefined = undefined;
+    let billIndex = 0;
+
     this.bills.map((bill, index) => {
       updatedBill = bill;
       if (bill.id === billUpdate.id) {
+        billIndex = index;
         if (billUpdate.title)
           updatedBill = { ...updatedBill, title: billUpdate.title };
-        if (billUpdate.dueDate)
-          updatedBill = { ...updatedBill, dueDate: billUpdate.dueDate };
+
         if (billUpdate.total)
           updatedBill = { ...updatedBill, total: billUpdate.total };
         if (billUpdate.isPaid)
@@ -22,7 +35,7 @@ export class BillsRepositoryInMemory implements IBillsRepository {
         this.bills.splice(index, 1, updatedBill);
       }
     });
-    return Promise.resolve(updatedBill);
+    return Promise.resolve(this.bills[billIndex]);
   }
 
   findBillById(billId: string): Promise<Bill | undefined> {

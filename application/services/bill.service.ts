@@ -4,6 +4,7 @@ import { IBillService } from '../IServices/IBill.service';
 import { CreateBillUseCase } from '../useCases/createBill.useCase';
 import { DeleteBillUseCase } from '../useCases/deleteBill.useCase';
 import { FindBillsByUserUseCase } from '../useCases/findBillsByUser.useCase';
+import { FindBillsDueToday } from '../useCases/findBillsDueToday.useCase';
 import { UpdateBillUseCase } from '../useCases/updateBillUseCase';
 
 export class BillService implements IBillService {
@@ -12,6 +13,7 @@ export class BillService implements IBillService {
     private readonly updateBillUseCase: UpdateBillUseCase,
     private readonly deleteBillUseCase: DeleteBillUseCase,
     private readonly findBillsByUserUseCase: FindBillsByUserUseCase,
+    private readonly findBillsDueToday: FindBillsDueToday,
   ) {}
 
   async findBillsByUserId(UserId: string): Promise<Bill[]> {
@@ -39,5 +41,9 @@ export class BillService implements IBillService {
     } else {
       throw new Error('Bill not found');
     }
+  }
+
+  async findBillsToSend() {
+    return await this.findBillsDueToday.execute();
   }
 }

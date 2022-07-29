@@ -11,4 +11,6 @@ export interface IBillsRepository {
   deleteBillById(billId: string): Promise<Bill | undefined>;
 
   updateBill(bill: BillUpdate): Promise<Bill | undefined>;
+
+  findBillsByDate(date: Date): Promise<Bill[]>;
 }
