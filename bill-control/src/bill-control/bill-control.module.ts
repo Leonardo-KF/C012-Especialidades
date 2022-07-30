@@ -1,7 +1,15 @@
 import { ApolloDriver } from '@nestjs/apollo';
 import { Module } from '@nestjs/common';
+import { ConfigModule } from '@nestjs/config';
 import { GraphQLModule } from '@nestjs/graphql';
+import { ScheduleModule } from '@nestjs/schedule';
 import { resolve } from 'path';
+import { DatabaseModule } from 'src/database/database.module';
+import { PrismaService } from 'src/database/prisma/prisma.service';
+import { MessagingModule } from 'src/messaging/messaging.module';
+import { KafkaService } from 'src/messaging/services/kafka.service';
+import { BillsRepositoryPrisma } from 'src/repositories/bill.repository';
+import { UsersRepositoryPrisma } from 'src/repositories/user.repository';
 import { IBillsRepository } from './core/application/IRepositories/IBillsRepository';
 import { IUsersRepository } from './core/application/IRepositories/IUsersRepository';
 import { BillService } from './core/application/services/bill.service';
@@ -12,8 +20,9 @@ import { FindBillsByUserUseCase } from './core/application/useCases/findBillsByU
 import { FindBillsDueToday } from './core/application/useCases/findBillsDueToday.useCase';
 import { UpdateBillUseCase } from './core/application/useCases/updateBillUseCase';
 import { UserValidation } from './core/application/utils/userValidationservice';
-import { BillsRepositoryInMemory } from './core/presentation/repositories/billsInMemory.repository';
-import { UsersRepositoryInMemory } from './core/presentation/repositories/userInMemory.repository';
+import { SendMessages } from './infra/comunication/sendMessages.service';
+// import { BillsRepositoryInMemory } from './core/presentation/repositories/billsInMemory.repository';
+// import { UsersRepositoryInMemory } from './core/presentation/repositories/userInMemory.repository';
 import { BillsResolverNest } from './infra/graphql/resolvers/bills.resolver';
 import { UserResolverNest } from './infra/graphql/resolvers/user.resolver';
 
@@ -23,19 +32,51 @@ import { UserResolverNest } from './infra/graphql/resolvers/user.resolver';
       driver: ApolloDriver,
       autoSchemaFile: resolve(process.cwd(), 'src/schema.gql'),
     }),
+    DatabaseModule,
+    MessagingModule,
+    ScheduleModule.forRoot(),
+    ConfigModule.forRoot(),
   ],
-
   providers: [
     BillsResolverNest,
     UserResolverNest,
     {
-      provide: BillsRepositoryInMemory,
-      useClass: BillsRepositoryInMemory,
+      provide: SendMessages,
+      useFactory: (
+        billsService: BillService,
+        userService: UserService,
+        kafkaService: KafkaService,
+      ) => {
+        return new SendMessages(billsService, userService, kafkaService);
+      },
+      inject: [BillService, UserService, KafkaService],
+    },
+    // prisma repository
+    {
+      provide: BillsRepositoryPrisma,
+      useFactory: (prismaService: PrismaService) => {
+        return new BillsRepositoryPrisma(prismaService);
+      },
+      inject: [PrismaService],
     },
     {
-      provide: UsersRepositoryInMemory,
-      useClass: UsersRepositoryInMemory,
+      provide: UsersRepositoryPrisma,
+      useFactory: (prismaService: PrismaService) => {
+        return new UsersRepositoryPrisma(prismaService);
+      },
+      inject: [PrismaService],
     },
+
+    // repository in memory
+    // {
+    //   provide: BillsRepositoryInMemory,
+    //   useClass: BillsRepositoryInMemory,
+    // },
+    // {
+    //   provide: UsersRepositoryInMemory,
+    //   useClass: UsersRepositoryInMemory,
+    // },
+
     {
       provide: UserValidation,
       useFactory: (
@@ -44,7 +85,7 @@ import { UserResolverNest } from './infra/graphql/resolvers/user.resolver';
       ) => {
         return new UserValidation(usersRepository, billsRepository);
       },
-      inject: [UsersRepositoryInMemory, BillsRepositoryInMemory],
+      inject: [UsersRepositoryPrisma, BillsRepositoryPrisma],
     },
     {
       provide: CreateBillUseCase,
@@ -54,7 +95,7 @@ import { UserResolverNest } from './infra/graphql/resolvers/user.resolver';
       ) => {
         return new CreateBillUseCase(billsRepository, userValidation);
       },
-      inject: [BillsRepositoryInMemory, UserValidation],
+      inject: [BillsRepositoryPrisma, UserValidation],
     },
     {
       provide: DeleteBillUseCase,
@@ -64,7 +105,7 @@ import { UserResolverNest } from './infra/graphql/resolvers/user.resolver';
       ) => {
         return new DeleteBillUseCase(billsRepository, userValidation);
       },
-      inject: [BillsRepositoryInMemory, UserValidation],
+      inject: [BillsRepositoryPrisma, UserValidation],
     },
     {
       provide: UpdateBillUseCase,
@@ -74,21 +115,21 @@ import { UserResolverNest } from './infra/graphql/resolvers/user.resolver';
       ) => {
         return new UpdateBillUseCase(billsRepository, userValidation);
       },
-      inject: [BillsRepositoryInMemory, UserValidation],
+      inject: [BillsRepositoryPrisma, UserValidation],
     },
     {
       provide: FindBillsByUserUseCase,
       useFactory: (billsRepository: IBillsRepository) => {
         return new FindBillsByUserUseCase(billsRepository);
       },
-      inject: [BillsRepositoryInMemory],
+      inject: [BillsRepositoryPrisma],
     },
     {
       provide: FindBillsDueToday,
       useFactory: (billsRepository: IBillsRepository) => {
         return new FindBillsDueToday(billsRepository);
       },
-      inject: [BillsRepositoryInMemory],
+      inject: [BillsRepositoryPrisma],
     },
     {
       provide: BillService,

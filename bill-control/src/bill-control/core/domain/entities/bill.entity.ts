@@ -10,7 +10,7 @@ export class BillEntity {
   public isPaid: boolean;
 
   constructor(bill: BillCreate) {
-    let alterDueDate = new Date(bill.dueDate).toISOString().slice(0, 10);
+    const alterDueDate = new Date(bill.dueDate).toISOString().slice(0, 10);
     this.id = randomUUID();
     this.barcode = bill.barcode;
     this.dueDate = new Date(alterDueDate + 'T00:00:00.000Z');

@@ -15,6 +15,10 @@ export class UserValidation {
     }
     return user;
   }
+
+  async findUserById(id: string) {
+    return await this.usersRepository.findUserById(id);
+  }
   async userCanModifyBill(auth0UserId: string, billId: string) {
     const user = await this.userExist(auth0UserId);
     const bill = await this.billsRepository.findBillById(billId);

@@ -20,16 +20,16 @@ type UserModelNest {
   id: ID!
   auth0UserId: String!
   bills: [BillModelNest!]!
-  userBills: [BillModelNest!]!
 }
 
 type Query {
-  hello: String!
   Me: UserModelNest!
 }
 
 type Mutation {
   CreateBill(data: CreateBillInputNest!): BillModelNest!
+  UpdateBill(data: UpdateBillInputNest!, billId: String!): BillModelNest!
+  DeleteBill(billId: String!): BillModelNest!
 }
 
 input CreateBillInputNest {
@@ -38,4 +38,10 @@ input CreateBillInputNest {
   total: Float!
   isPaid: Boolean!
   title: String!
+}
+
+input UpdateBillInputNest {
+  title: String
+  total: Float
+  isPaid: Boolean
 }
